@@ -14,13 +14,13 @@
         <p class="footer-info-text"><%= gettext("The Fuse network is a permissionless and border-less public ledger designed for easy integration of everyday payments.") %></p>
         <div class="footer-social-icons">
           <a href="https://github.com/fuseio" rel="noreferrer" target="_blank" class="footer-social-icon" title='<%= gettext("Github") %>'>
-            <i class="fab fa-github"></i>
+            <div class="footer-social-icon-container fontawesome-icon github"></div>
           </a>
           <a href="https://twitter.com/Fuse_network" rel="noreferrer" target="_blank" class="footer-social-icon" title='<%= gettext("Twitter") %>'>
-            <i class="fab fa-twitter"></i>
+            <div class="footer-social-icon-container fontawesome-icon twitter"></div>
           </a>
           <a href="https://t.me/fuseio" rel="noreferrer" target="_blank" class="footer-social-icon" title='<%= gettext("Telegram") %>'>
-            <i class="fab fa-telegram-plane"></i>
+            <div class="footer-social-icon-container fontawesome-icon telegram"></div>
           </a>
         </div>
       </div>

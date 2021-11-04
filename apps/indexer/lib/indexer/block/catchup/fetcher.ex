@@ -59,9 +59,7 @@ defmodule Indexer.Block.Catchup.Fetcher do
       Defaults to #{@blocks_concurrency}.  So, up to `blocks_concurrency * block_batch_size` (defaults to
       `#{@blocks_concurrency * @blocks_batch_size}`) blocks can be requested from the JSONRPC at once over all
       connections.  Up to `block_concurrency * receipts_batch_size * receipts_concurrency` (defaults to
-      `#{
-    @blocks_concurrency * Block.Fetcher.default_receipts_batch_size() * Block.Fetcher.default_receipts_batch_size()
-  }`
+      `#{@blocks_concurrency * Block.Fetcher.default_receipts_batch_size() * Block.Fetcher.default_receipts_batch_size()}`
       ) receipts can be requested from the JSONRPC at once over all connections.
 
   """
@@ -340,8 +338,16 @@ defmodule Indexer.Block.Catchup.Fetcher do
     string_value = Application.get_env(:indexer, :first_block)
 
     case Integer.parse(string_value) do
-      {integer, ""} -> integer
-      _ -> 0
+      {integer, ""} ->
+        integer
+
+      _ ->
+        min_missing_block_number =
+          "min_missing_block_number"
+          |> Chain.get_last_fetched_counter()
+          |> Decimal.to_integer()
+
+        min_missing_block_number
     end
   end
 

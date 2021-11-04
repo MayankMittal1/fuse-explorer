@@ -10,6 +10,9 @@ import { loadTokenBalanceDropdown } from '../lib/token_balance_dropdown'
 import '../lib/token_balance_dropdown_search'
 import '../lib/async_listing_load'
 import '../app'
+import {
+  openQrModal
+} from '../lib/modals'
 
 export const initialState = {
   channelDisconnected: false,
@@ -74,8 +77,10 @@ export function reducer (state = initialState, action) {
 
 let fetchedTokenBalanceBlockNumber = 0
 function loadTokenBalance (blockNumber) {
-  if (blockNumber >= fetchedTokenBalanceBlockNumber) {
+  if (blockNumber > fetchedTokenBalanceBlockNumber) {
     fetchedTokenBalanceBlockNumber = blockNumber
+    setTimeout(loadTokenBalanceDropdown, 1000)
+  } else if (fetchedTokenBalanceBlockNumber === 0 && blockNumber === null) {
     setTimeout(loadTokenBalanceDropdown, 1000)
   }
 }
@@ -91,7 +96,7 @@ const elements = {
       return { balanceCard: $el.html(), balance: parseFloat($el.find('.current-balance-in-wei').attr('data-wei-value')) }
     },
     render ($el, state, oldState) {
-      if (oldState.balance === state.balance) return
+      if (oldState.balance === state.balance || (isNaN(oldState.balance) && isNaN(state.balance))) return
       $el.empty().append(state.balanceCard)
       loadTokenBalance(state.fetchedCoinBalanceBlockNumber)
       updateAllCalculatedUsdValues()
@@ -215,4 +220,8 @@ if ($addressDetailsPage.length) {
     }))
 
   loadCounters(store)
+
+  $('.btn-qr-icon').click(_event => {
+    openQrModal()
+  })
 }

@@ -28,11 +28,11 @@ defmodule Explorer.SmartContract.Publisher do
     params_with_external_libaries = add_external_libraries(params, external_libraries)
 
     case Verifier.evaluate_authenticity(address_hash, params_with_external_libaries) do
-      {:ok, %{abi: abi, contructor_arguments: contructor_arguments}} ->
-        params_with_contructor_arguments =
-          Map.put(params_with_external_libaries, "constructor_arguments", contructor_arguments)
+      {:ok, %{abi: abi, constructor_arguments: constructor_arguments}} ->
+        params_with_constructor_arguments =
+          Map.put(params_with_external_libaries, "constructor_arguments", constructor_arguments)
 
-        publish_smart_contract(address_hash, params_with_contructor_arguments, abi)
+        publish_smart_contract(address_hash, params_with_constructor_arguments, abi)
 
       {:ok, %{abi: abi}} ->
         publish_smart_contract(address_hash, params_with_external_libaries, abi)
@@ -45,10 +45,24 @@ defmodule Explorer.SmartContract.Publisher do
     end
   end
 
-  defp publish_smart_contract(address_hash, params, abi) do
+  def publish_smart_contract(address_hash, params, abi) do
     attrs = address_hash |> attributes(params, abi)
 
-    Chain.create_smart_contract(attrs, attrs.external_libraries)
+    create_or_update_smart_contract(address_hash, attrs)
+  end
+
+  def publish_smart_contract(address_hash, params, abi, file_path) do
+    attrs = address_hash |> attributes(params, file_path, abi)
+
+    create_or_update_smart_contract(address_hash, attrs)
+  end
+
+  defp create_or_update_smart_contract(address_hash, attrs) do
+    if Chain.smart_contract_verified?(address_hash) do
+      Chain.update_smart_contract(attrs, attrs.external_libraries, attrs.secondary_sources)
+    else
+      Chain.create_smart_contract(attrs, attrs.external_libraries, attrs.secondary_sources)
+    end
   end
 
   defp unverified_smart_contract(address_hash, params, error, error_message) do
@@ -63,6 +77,10 @@ defmodule Explorer.SmartContract.Publisher do
       )
 
     %{changeset | action: :insert}
+  end
+
+  defp attributes(address_hash, params, file_path, abi) do
+    Map.put(attributes(address_hash, params, abi), :file_path, file_path)
   end
 
   defp attributes(address_hash, params, abi \\ %{}) do
@@ -89,7 +107,10 @@ defmodule Explorer.SmartContract.Publisher do
       contract_source_code: params["contract_source_code"],
       constructor_arguments: clean_constructor_arguments,
       external_libraries: prepared_external_libraries,
-      abi: abi
+      secondary_sources: params["secondary_sources"],
+      abi: abi,
+      verified_via_sourcify: params["verified_via_sourcify"],
+      partially_verified: params["partially_verified"]
     }
   end
 
@@ -104,7 +125,7 @@ defmodule Explorer.SmartContract.Publisher do
 
   defp add_external_libraries(params, external_libraries) do
     clean_external_libraries =
-      Enum.reduce(1..5, %{}, fn number, acc ->
+      Enum.reduce(1..10, %{}, fn number, acc ->
         address_key = "library#{number}_address"
         name_key = "library#{number}_name"
 

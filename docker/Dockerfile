@@ -1,6 +1,6 @@
-FROM bitwalker/alpine-elixir-phoenix:latest
+FROM bitwalker/alpine-elixir-phoenix:1.12.2
 
-RUN apk --no-cache --update add alpine-sdk gmp-dev automake libtool inotify-tools autoconf python3
+RUN apk --no-cache --update add alpine-sdk gmp-dev automake libtool inotify-tools autoconf python3 file
 
 # Get Rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -28,8 +28,14 @@ ADD . .
 ARG COIN
 RUN if [ "$COIN" != "" ]; then sed -i s/"POA"/"${COIN}"/g apps/block_scout_web/priv/gettext/en/LC_MESSAGES/default.po; fi
 
+# Run forderground build and phoenix digest
+RUN mix compile
+
+RUN npm install npm@latest
+
 ARG PROVIDER_URL
 ARG CONSENSUS_ADDRESS
+
 # Add blockscout npm deps
 RUN cd apps/block_scout_web/assets/ && \
     npm install && \

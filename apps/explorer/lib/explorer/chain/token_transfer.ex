@@ -201,18 +201,6 @@ defmodule Explorer.Chain.TokenTransfer do
     Repo.one(query, timeout: :infinity)
   end
 
-  @spec count_token_transfers_from_token_hash_and_token_id(Hash.t(), binary()) :: non_neg_integer()
-  def count_token_transfers_from_token_hash_and_token_id(token_address_hash, token_id) do
-    query =
-      from(
-        tt in TokenTransfer,
-        where: tt.token_contract_address_hash == ^token_address_hash and tt.token_id == ^token_id,
-        select: fragment("COUNT(*)")
-      )
-
-    Repo.one(query)
-  end
-
   def page_token_transfer(query, %PagingOptions{key: nil}), do: query
 
   def page_token_transfer(query, %PagingOptions{key: {token_id}}) do
@@ -305,7 +293,7 @@ defmodule Explorer.Chain.TokenTransfer do
       tt in TokenTransfer,
       left_join: instance in Instance,
       on: tt.token_contract_address_hash == instance.token_contract_address_hash and tt.token_id == instance.token_id,
-      where: instance.token_contract_address_hash == ^contract_address_hash,
+      where: tt.token_contract_address_hash == ^contract_address_hash,
       order_by: [desc: tt.block_number],
       distinct: [desc: tt.token_id],
       preload: [:to_address],

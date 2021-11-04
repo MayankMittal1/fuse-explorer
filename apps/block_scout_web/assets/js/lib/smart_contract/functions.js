@@ -1,7 +1,6 @@
 import $ from 'jquery'
-import { props } from 'eth-net-props'
-import { walletEnabled, connectToWallet, getCurrentAccount, shouldHideConnectButton } from './write.js'
-import { openErrorModal, openWarningModal, openSuccessModal, openModalWithMessage } from '../modals.js'
+import { getContractABI, getMethodInputs, prepareMethodArgs } from './common_helpers'
+import { walletEnabled, connectToWallet, shouldHideConnectButton, callMethod, queryMethod } from './write'
 import '../../pages/address'
 
 const loadFunctions = (element) => {
@@ -52,6 +51,24 @@ const loadFunctions = (element) => {
       $('[data-function]').each((_, element) => {
         readWriteFunction(element)
       })
+
+      $('.contract-exponentiation-btn').on('click', (event) => {
+        const $customPower = $(event.currentTarget).find('[name=custom_power]')
+        let power
+        if ($customPower.length > 0) {
+          power = parseInt($customPower.val(), 10)
+        } else {
+          power = parseInt($(event.currentTarget).data('power'), 10)
+        }
+        const $input = $(event.currentTarget).parent().parent().parent().find('[name=function_input]')
+        const currentInputVal = parseInt($input.val(), 10) || 1
+        const newInputVal = (currentInputVal * Math.pow(10, power)).toString()
+        $input.val(newInputVal.toString())
+      })
+
+      $('[name=custom_power]').on('click', (event) => {
+        $(event.currentTarget).parent().parent().toggleClass('show')
+      })
     })
     .fail(function (response) {
       $element.html(response.statusText)
@@ -99,135 +116,20 @@ const readWriteFunction = (element) => {
     if (action === 'read') {
       const url = $form.data('url')
 
+      const contractAbi = getContractABI($form)
+      const inputs = getMethodInputs(contractAbi, functionName)
       const $methodId = $form.find('input[name=method_id]')
-      const args = $.map($functionInputs, element => $(element).val())
+      const args = prepareMethodArgs($functionInputs, inputs)
+      const type = $('[data-smart-contract-functions]').data('type')
 
-      const data = {
-        function_name: functionName,
-        method_id: $methodId.val(),
-        args
-      }
-
-      $.get(url, data, response => $responseContainer.html(response))
+      walletEnabled()
+        .then((isWalletEnabled) => queryMethod(isWalletEnabled, url, $methodId, args, type, functionName, $responseContainer))
     } else if (action === 'write') {
       const explorerChainId = $form.data('chainId')
       walletEnabled()
         .then((isWalletEnabled) => callMethod(isWalletEnabled, $functionInputs, explorerChainId, $form, functionName, $element))
     }
   })
-}
-
-function callMethod (isWalletEnabled, $functionInputs, explorerChainId, $form, functionName, $element) {
-  if (!isWalletEnabled) {
-    const warningMsg = 'You haven\'t approved the reading of account list from your MetaMask or MetaMask/Nifty wallet is locked or is not installed.'
-    return openWarningModal('Unauthorized', warningMsg)
-  }
-
-  const $functionInputsExceptTxValue = $functionInputs.filter(':not([tx-value])')
-  const args = $.map($functionInputsExceptTxValue, element => $(element).val())
-
-  const txValue = getTxValue($functionInputs)
-  const contractAddress = $form.data('contract-address')
-  const contractAbi = getContractABI($form)
-
-  const { chainId: walletChainIdHex } = window.ethereum
-  compareChainIDs(explorerChainId, walletChainIdHex)
-    .then(currentAccount => {
-      if (functionName) {
-        const TargetContract = new window.web3.eth.Contract(contractAbi, contractAddress)
-        const functionAbi = contractAbi.find(abi =>
-          abi.name === functionName
-        )
-        const inputsCount = functionAbi && functionAbi.inputs.length
-        let methodToCall
-        const sendParams = { from: currentAccount, value: txValue || 0 }
-        if (inputsCount > 1) {
-          methodToCall = TargetContract.methods[functionName](...args).send(sendParams)
-        } else {
-          if (Array.isArray(args) && args[0] === '') {
-            methodToCall = TargetContract.methods[functionName]([]).send(sendParams)
-          } else { methodToCall = TargetContract.methods[functionName](args).send(sendParams) }
-        }
-        methodToCall
-          .on('error', function (error) {
-            openErrorModal(`Error in sending transaction for method "${functionName}"`, formatError(error), false)
-          })
-          .on('transactionHash', function (txHash) {
-            onTransactionHash(txHash, $element, functionName)
-          })
-      } else {
-        const txParams = {
-          from: currentAccount,
-          to: contractAddress,
-          value: txValue || 0
-        }
-        window.ethereum.request({
-          method: 'eth_sendTransaction',
-          params: [txParams]
-        })
-          .then(function (txHash) {
-            onTransactionHash(txHash, $element, functionName)
-          })
-          .catch(function (error) {
-            openErrorModal('Error in sending transaction for fallback method', formatError(error), false)
-          })
-      }
-    })
-    .catch(error => {
-      openWarningModal('Unauthorized', formatError(error))
-    })
-}
-
-function getTxValue ($functionInputs) {
-  const WEI_MULTIPLIER = 10 ** 18
-  const $txValue = $functionInputs.filter('[tx-value]:first')
-  const txValue = $txValue && $txValue.val() && parseFloat($txValue.val()) * WEI_MULTIPLIER
-  const txValueStr = txValue && txValue.toString(16)
-  return txValueStr
-}
-
-function getContractABI ($form) {
-  const implementationAbi = $form.data('implementation-abi')
-  const parentAbi = $form.data('contract-abi')
-  const $parent = $('[data-smart-contract-functions]')
-  const contractType = $parent.data('type')
-  const contractAbi = contractType === 'proxy' ? implementationAbi : parentAbi
-  return contractAbi
-}
-
-function compareChainIDs (explorerChainId, walletChainIdHex) {
-  if (explorerChainId !== parseInt(walletChainIdHex)) {
-    const networkDisplayNameFromWallet = props.getNetworkDisplayName(walletChainIdHex)
-    const networkDisplayName = props.getNetworkDisplayName(explorerChainId)
-    const errorMsg = `You connected to ${networkDisplayNameFromWallet} chain in the wallet, but the current instance of Blockscout is for ${networkDisplayName} chain`
-    return Promise.reject(new Error(errorMsg))
-  } else {
-    return getCurrentAccount()
-  }
-}
-
-function onTransactionHash (txHash, $element, functionName) {
-  openModalWithMessage($element.find('#pending-contract-write'), true, txHash)
-  const getTxReceipt = (txHash) => {
-    window.ethereum.request({
-      method: 'eth_getTransactionReceipt',
-      params: [txHash]
-    })
-      .then(txReceipt => {
-        if (txReceipt) {
-          const successMsg = `Successfully sent <a href="/tx/${txHash}">transaction</a> for method "${functionName}"`
-          openSuccessModal('Success', successMsg)
-          clearInterval(txReceiptPollingIntervalId)
-        }
-      })
-  }
-  const txReceiptPollingIntervalId = setInterval(() => { getTxReceipt(txHash) }, 5 * 1000)
-}
-
-const formatError = (error) => {
-  let { message } = error
-  message = message && message.split('Error: ').length > 1 ? message.split('Error: ')[1] : message
-  return message
 }
 
 const container = $('[data-smart-contract-functions]')

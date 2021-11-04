@@ -1,7 +1,7 @@
 defmodule BlockScoutWeb.APIDocsView do
   use BlockScoutWeb, :view
 
-  alias BlockScoutWeb.{Endpoint, LayoutView}
+  alias BlockScoutWeb.LayoutView
 
   def action_tile_id(module, action) do
     "#{module}-#{action}"
