@@ -33,7 +33,7 @@ config :indexer,
   ecto_repos: [Explorer.Repo],
   metadata_updater_seconds_interval:
     String.to_integer(System.get_env("TOKEN_METADATA_UPDATE_INTERVAL") || "#{2 * 24 * 60 * 60}"),
-  #  bytes
+  ## bytes
   # trigger
   memory_limit: 3 <<< 30,
   first_block: System.get_env("FIRST_BLOCK") || "",
