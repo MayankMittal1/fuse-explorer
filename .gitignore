@@ -55,3 +55,6 @@ screenshots/
 *.iml
 
 .vscode
+
+*.pem
+*.key

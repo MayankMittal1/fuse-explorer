@@ -1,0 +1,45 @@
+.dashboard-banner-container {
+  height: initial;
+
+  .card {
+    box-shadow: none;
+    min-height: 210px;
+    max-height: 210px;
+
+    @include media-breakpoint-down(sm) {
+      max-height: none;
+    }
+
+    .cycle-icon {
+      position: absolute;
+      right: 20px;
+      top: 30px;
+    }
+
+    .dashboard-banner-card-title {
+      font-size: 14px;
+      color: #9a9a9a;
+    }
+    
+    .dashboard-banner-card-value {
+      font-size: 1.75rem;
+      color: #8291A0; 
+
+      &.dashboard-banner-card-value-small {
+        font-size: 1rem;
+        line-height: 1;
+        margin-top: 1rem;
+      }
+    
+      .symbol {
+        font-size: 14px;
+      }
+
+      .validator-info-url {
+        font-size: 14px;
+        color: #9a9a9a;
+        text-decoration: underline;
+      }
+    }
+  }
+}

@@ -1,9 +1,11 @@
 @import "./mixins";
 
 /* Phoenix flash messages */
+
 .alert:empty {
-  display: none;
+    display: none;
 }
+
 
 /* This file is for your main application css. */
 
@@ -13,14 +15,11 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 @import "~@fortawesome/fontawesome-free/scss/brands";
 @import "~@fortawesome/fontawesome-free/scss/regular";
 @import "~@fortawesome/fontawesome-free/scss/solid";
-
 // Bootstrap Core CSS
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/mixins";
-
 @import "theme/variables";
-
 @import "~bootstrap/scss/root";
 @import "~bootstrap/scss/reboot";
 @import "~bootstrap/scss/grid";
@@ -39,7 +38,6 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 @import "~bootstrap/scss/utilities/position";
 @import "~bootstrap/scss/utilities/borders";
 @import "~bootstrap/scss/progress";
-
 // Bootstrap Components
 @import "~bootstrap/scss/alert";
 @import "~bootstrap/scss/badge";
@@ -51,13 +49,10 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 @import "~bootstrap/scss/pagination";
 @import "~bootstrap/scss/tables";
 @import "~bootstrap/scss/transitions";
-
 // Code highlight
 @import "~highlight.js/styles/default";
-
 //Custom theme
 @import "theme/fonts";
-
 // Custom SCSS
 @import "layout";
 @import "typography";
@@ -125,12 +120,20 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 @import "components/_search";
 @import "components/_ad";
 @import "components/_account";
-
 // Font Awesome
 @import "components/_fontawesome_icon";
-
 @import "theme/dark-theme";
-
+// Fuse custom CSS
+@import "custom/custom.scss";
 @import "theme/custom_contracts/dark-forest-theme";
 @import "theme/custom_contracts/circles-theme";
-
+:export {
+    dashboardBannerChartAxisFontColor: $dashboard-banner-chart-axis-font-color;
+    dashboardLineColorMarket: $dashboard-line-color-market;
+    dashboardLineColorPrice: $dashboard-line-color-price;
+    dashboardLineColorTransactions: $dashboard-line-color-transactions;
+    primary: $primary;
+    secondary: $secondary;
+    darkprimary: $dark-primary;
+    darksecondary: $dark-secondary;
+}

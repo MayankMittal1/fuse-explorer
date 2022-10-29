@@ -1,43 +1,33 @@
-import debounce from 'lodash.debounce'
-
 import { of } from 'rxjs'
 import { delay, tap, mergeMap, repeat } from 'rxjs/operators'
+import $ from 'jquery'
+import 'jquery-circle-progress'
 
-export function batchChannel (func) {
-  let msgs = []
-  const debouncedFunc = debounce(() => {
-    func.apply(this, [msgs])
-    msgs = []
-  }, 1000, { maxWait: 5000 })
-  return (msg) => {
-    msgs.push(msg)
-    debouncedFunc()
+class ProgressCircle {
+  constructor ($el) {
+    this.$el = $el
+    this.init()
+  }
+
+  init () {
+    $(this.$el).circleProgress({
+      value: 0,
+      size: 150,
+      thickness: 12,
+      emptyFill: '#49687c',
+      lineCap: 'round'
+    }).on('circle-animation-progress', function (event, progress, stepValue) {
+      $(this).find('.progress-value').html(`${Math.trunc(stepValue * 100)}%`)
+    })
+  }
+
+  set (value) {
+    $(this.$el).circleProgress('value', value)
   }
 }
 
-export function showLoader (isTimeout, loader) {
-  if (isTimeout) {
-    const timeout = setTimeout(function () {
-      loader.removeAttr('hidden')
-      loader.show()
-    }, 100)
-    return timeout
-  } else {
-    loader.hide()
-    return null
-  }
-}
-
-export function escapeHtml (text) {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  }
-
-  return text.replace(/[&<>"']/g, function (m) { return map[m] })
+export function createCycleEndProgressCircle ($el) {
+  return new ProgressCircle($el)
 }
 
 export function secondsToDhms (seconds) {
