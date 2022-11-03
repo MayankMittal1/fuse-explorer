@@ -4,10 +4,10 @@ import WalletConnectProvider from '@walletconnect/web3-provider'
 import { compareChainIDs, formatError, showConnectElements, showConnectedToElements } from './common_helpers'
 import { openWarningModal } from '../modals'
 
-const instanceChainIdStr = document.getElementById('js-chain-id').value
+const instanceChainIdStr = process.env.CHAIN_ID
 const instanceChainId = parseInt(instanceChainIdStr, 10)
 const walletConnectOptions = { rpc: {}, chainId: instanceChainId }
-const jsonRPC = document.getElementById('js-json-rpc').value
+const jsonRPC = process.env.JSON_RPC
 walletConnectOptions.rpc[instanceChainId] = jsonRPC
 
 // Chosen wallet provider given by the dialog window
