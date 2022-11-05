@@ -12,7 +12,7 @@ defmodule Explorer.Chain.Address.CurrentTokenBalance do
   import Ecto.Query, only: [from: 2, limit: 2, offset: 2, order_by: 3, preload: 2]
 
   alias Explorer.{Chain, PagingOptions, Repo}
-  alias Explorer.Chain.{Address, Block, Hash, Token}
+  alias Explorer.Chain.{Address, Block,BridgedToken, Hash, Token}
 
   @default_paging_options %PagingOptions{page_size: 50}
 
@@ -163,10 +163,11 @@ defmodule Explorer.Chain.Address.CurrentTokenBalance do
       ctb in __MODULE__,
       where: ctb.address_hash == ^address_hash,
       where: ctb.value > 0,
-      left_join: t in Token,
-      on: ctb.token_contract_address_hash == t.contract_address_hash,
-      select: {ctb, t},
-      order_by: [desc: ctb.value, asc: t.type, asc: t.name]
+      left_join: bt in BridgedToken,
+      on: ctb.token_contract_address_hash == bt.home_token_contract_address_hash,
+      preload: :token,
+      select: {ctb, bt},
+      order_by: [desc: ctb.value, asc: bt.type, asc: bt.name]
     )
   end
 

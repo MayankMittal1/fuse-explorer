@@ -27,7 +27,8 @@ indexer_empty_blocks_sanitizer_batch_size =
     _ -> indexer_empty_blocks_sanitizer_batch_size_default
   end
 
-config :indexer, Indexer.Fetcher.EmptyBlocksSanitizer, batch_size: indexer_empty_blocks_sanitizer_batch_size
+config :indexer, Indexer.Fetcher.EmptyBlocksSanitizer,
+  batch_size: indexer_empty_blocks_sanitizer_batch_size
 
 config :block_scout_web, :footer,
   chat_link: System.get_env("FOOTER_CHAT_LINK", "https://discord.gg/blockscout"),
@@ -54,8 +55,13 @@ config :block_scout_web,
   version: System.get_env("BLOCKSCOUT_VERSION"),
   release_link: System.get_env("RELEASE_LINK"),
   decompiled_smart_contract_token: System.get_env("DECOMPILED_SMART_CONTRACT_TOKEN"),
-  show_percentage: if(System.get_env("SHOW_ADDRESS_MARKETCAP_PERCENTAGE", "true") == "false", do: false, else: true),
-  checksum_address_hashes: if(System.get_env("CHECKSUM_ADDRESS_HASHES", "true") == "false", do: false, else: true)
+  show_percentage:
+    if(System.get_env("SHOW_ADDRESS_MARKETCAP_PERCENTAGE", "true") == "false",
+      do: false,
+      else: true
+    ),
+  checksum_address_hashes:
+    if(System.get_env("CHECKSUM_ADDRESS_HASHES", "true") == "false", do: false, else: true)
 
 config :block_scout_web, BlockScoutWeb.Chain,
   network: System.get_env("NETWORK"),
@@ -87,7 +93,15 @@ config :block_scout_web,
   webapp_url: System.get_env("WEBAPP_URL"),
   api_url: System.get_env("API_URL"),
   apps_menu: if(System.get_env("APPS_MENU", "false") == "true", do: true, else: false),
+<<<<<<< HEAD
   apps: System.get_env("APPS") || System.get_env("EXTERNAL_APPS"),
+=======
+  external_apps: System.get_env("EXTERNAL_APPS"),
+  eth_omni_bridge_mediator: System.get_env("ETH_OMNI_BRIDGE_MEDIATOR"),
+  bsc_omni_bridge_mediator: System.get_env("BSC_OMNI_BRIDGE_MEDIATOR"),
+  amb_bridge_mediators: System.get_env("AMB_BRIDGE_MEDIATORS"),
+  foreign_json_rpc: System.get_env("FOREIGN_JSON_RPC", ""),
+>>>>>>> f909f9c2e (ft: add bridged tokens)
   gas_price: System.get_env("GAS_PRICE", nil),
   restricted_list: System.get_env("RESTRICTED_LIST", nil),
   restricted_list_key: System.get_env("RESTRICTED_LIST_KEY", nil),
@@ -96,7 +110,8 @@ config :block_scout_web,
   circles_addresses: System.get_env("CUSTOM_CONTRACT_ADDRESSES_CIRCLES"),
   test_tokens_addresses: System.get_env("CUSTOM_CONTRACT_ADDRESSES_TEST_TOKEN"),
   max_size_to_show_array_as_is: Integer.parse(System.get_env("MAX_SIZE_UNLESS_HIDE_ARRAY", "50")),
-  max_length_to_show_string_without_trimming: System.get_env("MAX_STRING_LENGTH_WITHOUT_TRIMMING", "2040"),
+  max_length_to_show_string_without_trimming:
+    System.get_env("MAX_STRING_LENGTH_WITHOUT_TRIMMING", "2040"),
   re_captcha_secret_key: System.get_env("RE_CAPTCHA_SECRET_KEY", nil),
   re_captcha_client_key: System.get_env("RE_CAPTCHA_CLIENT_KEY", nil),
   new_tags: System.get_env("NEW_TAGS"),
@@ -177,12 +192,17 @@ config :block_scout_web, BlockScoutWeb.API.V2, enabled: System.get_env("API_V2_E
 ########################
 
 config :ethereum_jsonrpc,
-  rpc_transport: if(System.get_env("ETHEREUM_JSONRPC_TRANSPORT", "http") == "http", do: :http, else: :ipc),
+  rpc_transport:
+    if(System.get_env("ETHEREUM_JSONRPC_TRANSPORT", "http") == "http", do: :http, else: :ipc),
   ipc_path: System.get_env("IPC_PATH"),
-  disable_archive_balances?: System.get_env("ETHEREUM_JSONRPC_DISABLE_ARCHIVE_BALANCES", "false") == "true"
+  disable_archive_balances?:
+    System.get_env("ETHEREUM_JSONRPC_DISABLE_ARCHIVE_BALANCES", "false") == "true"
 
-debug_trace_transaction_timeout = System.get_env("ETHEREUM_JSONRPC_DEBUG_TRACE_TRANSACTION_TIMEOUT", "5s")
-config :ethereum_jsonrpc, EthereumJSONRPC.Geth, debug_trace_transaction_timeout: debug_trace_transaction_timeout
+debug_trace_transaction_timeout =
+  System.get_env("ETHEREUM_JSONRPC_DEBUG_TRACE_TRANSACTION_TIMEOUT", "5s")
+
+config :ethereum_jsonrpc, EthereumJSONRPC.Geth,
+  debug_trace_transaction_timeout: debug_trace_transaction_timeout
 
 config :ethereum_jsonrpc, EthereumJSONRPC.PendingTransaction,
   type: System.get_env("ETHEREUM_JSONRPC_PENDING_TRANSACTIONS_TYPE", "default")
@@ -225,7 +245,8 @@ config :explorer, Explorer.Chain.Events.Listener,
 config :explorer, Explorer.ChainSpec.GenesisData,
   chain_spec_path: System.get_env("CHAIN_SPEC_PATH"),
   emission_format: System.get_env("EMISSION_FORMAT", "DEFAULT"),
-  rewards_contract_address: System.get_env("REWARDS_CONTRACT", "0xeca443e8e1ab29971a45a9c57a6a9875701698a5")
+  rewards_contract_address:
+    System.get_env("REWARDS_CONTRACT", "0xeca443e8e1ab29971a45a9c57a6a9875701698a5")
 
 config :explorer, Explorer.Chain.Cache.BlockNumber,
   ttl_check_interval: if(disable_indexer == "true", do: :timer.seconds(1), else: false),
@@ -255,14 +276,21 @@ config :explorer, Explorer.ExchangeRates,
 
 exchange_rates_source =
   cond do
-    System.get_env("EXCHANGE_RATES_SOURCE") == "coin_gecko" -> Explorer.ExchangeRates.Source.CoinGecko
-    System.get_env("EXCHANGE_RATES_SOURCE") == "coin_market_cap" -> Explorer.ExchangeRates.Source.CoinMarketCap
-    true -> Explorer.ExchangeRates.Source.CoinGecko
+    System.get_env("EXCHANGE_RATES_SOURCE") == "coin_gecko" ->
+      Explorer.ExchangeRates.Source.CoinGecko
+
+    System.get_env("EXCHANGE_RATES_SOURCE") == "coin_market_cap" ->
+      Explorer.ExchangeRates.Source.CoinMarketCap
+
+    true ->
+      Explorer.ExchangeRates.Source.CoinGecko
   end
 
 config :explorer, Explorer.ExchangeRates.Source, source: exchange_rates_source
 
-config :explorer, Explorer.KnownTokens, enabled: System.get_env("DISABLE_KNOWN_TOKENS") != "true", store: :ets
+config :explorer, Explorer.KnownTokens,
+  enabled: System.get_env("DISABLE_KNOWN_TOKENS") != "true",
+  store: :ets
 
 config :explorer, Explorer.Market.History.Cataloger, enabled: disable_indexer != "true"
 
@@ -314,7 +342,8 @@ case System.get_env("SUPPLY_MODULE") do
 end
 
 config :explorer,
-  checksum_function: System.get_env("CHECKSUM_FUNCTION") && String.to_atom(System.get_env("CHECKSUM_FUNCTION"))
+  checksum_function:
+    System.get_env("CHECKSUM_FUNCTION") && String.to_atom(System.get_env("CHECKSUM_FUNCTION"))
 
 config :explorer, Explorer.Chain.Cache.Blocks,
   ttl_check_interval: if(disable_indexer == "true", do: :timer.seconds(1), else: false),
@@ -401,7 +430,8 @@ config :indexer, Indexer.Fetcher.PendingTransaction.Supervisor,
     System.get_env("ETHEREUM_JSONRPC_VARIANT") == "besu" ||
       System.get_env("INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER", "false") == "true"
 
-token_balance_on_demand_fetcher_threshold_minutes = System.get_env("TOKEN_BALANCE_ON_DEMAND_FETCHER_THRESHOLD_MINUTES")
+token_balance_on_demand_fetcher_threshold_minutes =
+  System.get_env("TOKEN_BALANCE_ON_DEMAND_FETCHER_THRESHOLD_MINUTES")
 
 token_balance_on_demand_fetcher_threshold =
   case token_balance_on_demand_fetcher_threshold_minutes &&
@@ -410,9 +440,11 @@ token_balance_on_demand_fetcher_threshold =
     _ -> 60
   end
 
-config :indexer, Indexer.Fetcher.TokenBalanceOnDemand, threshold: token_balance_on_demand_fetcher_threshold
+config :indexer, Indexer.Fetcher.TokenBalanceOnDemand,
+  threshold: token_balance_on_demand_fetcher_threshold
 
-coin_balance_on_demand_fetcher_threshold_minutes = System.get_env("COIN_BALANCE_ON_DEMAND_FETCHER_THRESHOLD_MINUTES")
+coin_balance_on_demand_fetcher_threshold_minutes =
+  System.get_env("COIN_BALANCE_ON_DEMAND_FETCHER_THRESHOLD_MINUTES")
 
 coin_balance_on_demand_fetcher_threshold =
   case coin_balance_on_demand_fetcher_threshold_minutes &&
@@ -421,7 +453,8 @@ coin_balance_on_demand_fetcher_threshold =
     _ -> 60
   end
 
-config :indexer, Indexer.Fetcher.CoinBalanceOnDemand, threshold: coin_balance_on_demand_fetcher_threshold
+config :indexer, Indexer.Fetcher.CoinBalanceOnDemand,
+  threshold: coin_balance_on_demand_fetcher_threshold
 
 config :indexer, Indexer.Fetcher.BlockReward.Supervisor,
   disabled?: System.get_env("INDEXER_DISABLE_BLOCK_REWARD_FETCHER", "false") == "true"
@@ -440,7 +473,8 @@ config :indexer, Indexer.Fetcher.EmptyBlocksSanitizer.Supervisor,
 
 config :indexer, Indexer.Supervisor, enabled: System.get_env("DISABLE_INDEXER") != "true"
 
-config :indexer, Indexer.Block.Realtime.Supervisor, enabled: System.get_env("DISABLE_REALTIME_INDEXER") != "true"
+config :indexer, Indexer.Block.Realtime.Supervisor,
+  enabled: System.get_env("DISABLE_REALTIME_INDEXER") != "true"
 
 config :indexer, Indexer.Fetcher.TokenInstance.Supervisor,
   disabled?: System.get_env("DISABLE_TOKEN_INSTANCE_FETCHER", "false") == "true"
@@ -449,10 +483,20 @@ blocks_catchup_fetcher_batch_size_default_str = "10"
 blocks_catchup_fetcher_concurrency_default_str = "10"
 
 {blocks_catchup_fetcher_batch_size, _} =
-  Integer.parse(System.get_env("INDEXER_CATCHUP_BLOCKS_BATCH_SIZE", blocks_catchup_fetcher_batch_size_default_str))
+  Integer.parse(
+    System.get_env(
+      "INDEXER_CATCHUP_BLOCKS_BATCH_SIZE",
+      blocks_catchup_fetcher_batch_size_default_str
+    )
+  )
 
 {blocks_catchup_fetcher_concurrency, _} =
-  Integer.parse(System.get_env("INDEXER_CATCHUP_BLOCKS_CONCURRENCY", blocks_catchup_fetcher_concurrency_default_str))
+  Integer.parse(
+    System.get_env(
+      "INDEXER_CATCHUP_BLOCKS_CONCURRENCY",
+      blocks_catchup_fetcher_concurrency_default_str
+    )
+  )
 
 config :indexer, Indexer.Block.Catchup.Fetcher,
   batch_size: blocks_catchup_fetcher_batch_size,
@@ -460,6 +504,7 @@ config :indexer, Indexer.Block.Catchup.Fetcher,
 
 Code.require_file("#{config_env()}.exs", "config/runtime")
 
-for config <- "../apps/*/config/runtime/#{config_env()}.exs" |> Path.expand(__DIR__) |> Path.wildcard() do
+for config <-
+      "../apps/*/config/runtime/#{config_env()}.exs" |> Path.expand(__DIR__) |> Path.wildcard() do
   Code.require_file("#{config_env()}.exs", Path.dirname(config))
 end
