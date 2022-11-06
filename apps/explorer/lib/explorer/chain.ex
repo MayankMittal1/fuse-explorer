@@ -2496,7 +2496,7 @@ defmodule Explorer.Chain do
         on: t.contract_address_hash == bt.home_token_contract_address_hash,
         where: t.total_supply > ^0,
         where: t.bridged,
-        order_by: [desc: t.holder_count, asc: t.name],
+        order_by: [desc: t.holder_count],
         select: [t, bt],
         preload: [:contract_address]
       )
