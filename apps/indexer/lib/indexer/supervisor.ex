@@ -7,6 +7,8 @@ defmodule Indexer.Supervisor do
 
   alias Explorer.Chain
 
+  require Logger
+
   alias Indexer.{
     Block,
     CalcLpTokensTotalLiqudity,
@@ -150,9 +152,11 @@ defmodule Indexer.Supervisor do
 
     extended_fetchers =
       if Chain.bridged_tokens_enabled?() do
+        Logger.info("Bridged tokens enabled, starting fetchers")
         fetchers_with_omni_status = [{SetOmniBridgedMetadataForTokens, [[], []]} | basic_fetchers]
         [{CalcLpTokensTotalLiqudity, [[], []]} | fetchers_with_omni_status]
       else
+        Logger.info("Bridged tokens disabled, skipping fetchers")
         basic_fetchers
       end
 
@@ -166,7 +170,7 @@ defmodule Indexer.Supervisor do
       end
 
     Supervisor.init(
-      basic_fetchers,
+      all_fetchers,
       strategy: :one_for_one
     )
   end

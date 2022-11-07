@@ -48,7 +48,5 @@ defmodule Indexer.SetOmniBridgedMetadataForTokens do
 
   defp fetch_omni_bridged_tokens_metadata(token_addresses) do
     :ok = Chain.fetch_omni_bridged_tokens_metadata(token_addresses)
-
-    Logger.debug(fn -> "Bridged status fetched for tokens" end)
   end
 end

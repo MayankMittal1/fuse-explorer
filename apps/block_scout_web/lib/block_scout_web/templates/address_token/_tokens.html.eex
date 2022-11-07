@@ -1,10 +1,10 @@
-<tr data-identifier-hash="<%= @token.contract_address_hash %>">
+<tr data-identifier-hash="<%= @token_balance.token.contract_address_hash %>">
   <td class="stakes-td">
   </td>
   <td>
     <%= if System.get_env("DISPLAY_TOKEN_ICONS") === "true" do %>
       <% chain_id_for_token_icon = Application.get_env(:block_scout_web, :chain_id) %>
-      <% address_hash = @token.contract_address_hash %>
+      <% address_hash = @token_balance.token.contract_address_hash %>
       <%=
         render BlockScoutWeb.TokensView,
         "_token_icon.html",
@@ -15,21 +15,21 @@
   </td>
   <td class="stakes-td">
     <%= link(
-          to: address_token_transfers_path(@conn, :index, to_string(@address.hash), to_string(@token.contract_address_hash)),
+          to: address_token_transfers_path(@conn, :index, to_string(@address.hash), to_string(@token_balance.token.contract_address_hash)),
           class: "tile-title-lg",
           "data-test": "token_transfers_#{@token.contract_address_hash}"
       ) do %>
-      <%= token_name(@token) %>
+      <%= token_name(@token_balance.token) %>
     <% end %>
   </td>
   <td class="stakes-td">
-    <%= @token.type  %>
+    <%= @token_balance.token.type  %>
   </td>
   <td class="stakes-td">
-    <%= format_according_to_decimals(@token_balance.value, @token.decimals)  %>
+    <%= format_according_to_decimals(@token_balance.value, @token_balance.token.decimals)  %>
   </td>
   <td class="stakes-td">
-    <%= @token.symbol %>
+    <%= @token_balance.token.symbol %>
   </td>
   <td class="stakes-td">
     <p class="mb-0 col-md-6 text-right text-muted">
@@ -45,7 +45,7 @@
     <% end %>
   </td>
   <td class="stakes-td">
-    <%= with {:ok, address} <- Chain.hash_to_address(@token.contract_address_hash) do
+    <%= with {:ok, address} <- Chain.hash_to_address(@token_balance.token.contract_address_hash) do
       render BlockScoutWeb.AddressView,
       "_link.html",
       address: address,

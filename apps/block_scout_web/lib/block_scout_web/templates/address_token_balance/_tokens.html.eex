@@ -23,7 +23,7 @@
         <div class="row dropdown-row wh-sp">
           <%= if System.get_env("DISPLAY_TOKEN_ICONS") === "true" do %>
             <% chain_id_for_token_icon = Application.get_env(:block_scout_web, :chain_id) %>
-            <% address_hash = token.contract_address_hash %>
+            <% address_hash = token_balance.token.contract_address_hash %>
             <%=
               render BlockScoutWeb.TokensView,
               "_token_icon.html",
@@ -32,7 +32,7 @@
               additional_classes: ["token-wallet-icon"]
             %>
           <% end %>
-          <p class="mb-0 col-md-6 pl-0 pr-0 el-1 flex-grow-2 <%= if System.get_env("DISPLAY_TOKEN_ICONS") !== "true", do: "ml-5px" %>"><%= token_name(token) %>
+          <p class="mb-0 col-md-6 pl-0 pr-0 el-1 flex-grow-2 <%= if System.get_env("DISPLAY_TOKEN_ICONS") !== "true", do: "ml-5px" %>"><%= token_name(token_balance.token) %>
           </p>
           <%= if token.usd_value do %>
             <p class="mb-0 col-md-6 text-right usd-total">
