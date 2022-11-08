@@ -715,16 +715,8 @@ defmodule Explorer.Chain do
     )
   end
 
-<<<<<<< HEAD
   def where_block_number_in_period(base_query, from_block, to_block) when is_nil(from_block) and is_nil(to_block) do
     base_query
-=======
-  def where_block_number_in_period(base_query, from_block, to_block)
-      when is_nil(from_block) and is_nil(to_block) do
-    from(q in base_query,
-      where: 1
-    )
->>>>>>> b739aeeb8 (fix: token balances)
   end
 
   def where_block_number_in_period(base_query, from_block, to_block) do
@@ -870,18 +862,7 @@ defmodule Explorer.Chain do
     %{hash: block_hash, number: block_number} = block
     base_fee_per_gas = Map.get(block, :base_fee_per_gas)
 
-<<<<<<< HEAD
     txn_fees = txn_fees(transactions)
-=======
-    txn_fees =
-      Enum.reduce(transactions, Decimal.new(0), fn %{gas_used: gas_used, gas_price: gas_price},
-                                                   acc ->
-        gas_used
-        |> Decimal.new()
-        |> Decimal.mult(Decimal.new(gas_price))
-        |> Decimal.add(acc)
-      end)
->>>>>>> b739aeeb8 (fix: token balances)
 
     static_reward =
       Repo.one(
@@ -895,16 +876,9 @@ defmodule Explorer.Chain do
 
     has_uncles? = is_list(block.uncles) and not Enum.empty?(block.uncles)
 
-<<<<<<< HEAD
     burned_fees = burned_fees(transactions, base_fee_per_gas)
     uncle_reward = (has_uncles? && Wei.mult(static_reward, Decimal.from_float(@uncle_reward_coef))) || nil
-=======
-    burned_fees =
-      base_fee_per_gas && Wei.mult(%Wei{value: Decimal.new(base_fee_per_gas)}, burned_fee_counter)
 
-    uncle_reward =
-      (has_uncles? && Wei.mult(static_reward, Decimal.from_float(@uncle_reward_coef))) || nil
->>>>>>> b739aeeb8 (fix: token balances)
 
     %{
       block_number: block_number,
@@ -966,16 +940,10 @@ defmodule Explorer.Chain do
       `:key` (a tuple of the lowest/oldest `{index}`) and. Results will be the transactions older than
       the `index` that are passed.
   """
-<<<<<<< HEAD
   @spec block_to_transactions(Hash.Full.t(), [paging_options | necessity_by_association_option], true | false) :: [
           Transaction.t()
         ]
   def block_to_transactions(block_hash, options \\ [], old_ui? \\ true) when is_list(options) do
-=======
-  @spec block_to_transactions(Hash.Full.t(), [paging_options | necessity_by_association_option]) ::
-          [Transaction.t()]
-  def block_to_transactions(block_hash, options \\ []) when is_list(options) do
->>>>>>> b739aeeb8 (fix: token balances)
     necessity_by_association = Keyword.get(options, :necessity_by_association, %{})
 
     options
@@ -3501,7 +3469,6 @@ defmodule Explorer.Chain do
       the `block_number` and `index` that are passed.
 
   """
-<<<<<<< HEAD
   @spec recent_collated_transactions(true | false, [paging_options | necessity_by_association_option], [String.t()], [
           :atom
         ]) :: [
@@ -3513,32 +3480,6 @@ defmodule Explorer.Chain do
     paging_options = Keyword.get(options, :paging_options, @default_paging_options)
 
     fetch_recent_collated_transactions(old_ui?, paging_options, necessity_by_association, method_id_filter, type_filter)
-=======
-  @spec recent_collated_transactions([paging_options | necessity_by_association_option]) :: [
-          Transaction.t()
-        ]
-  def recent_collated_transactions(options \\ []) when is_list(options) do
-    necessity_by_association = Keyword.get(options, :necessity_by_association, %{})
-    paging_options = Keyword.get(options, :paging_options, @default_paging_options)
-
-    if is_nil(paging_options.key) do
-      paging_options.page_size
-      |> Transactions.take_enough()
-      |> case do
-        nil ->
-          transactions =
-            fetch_recent_collated_transactions(paging_options, necessity_by_association)
-
-          Transactions.update(transactions)
-          transactions
-
-        transactions ->
-          transactions
-      end
-    else
-      fetch_recent_collated_transactions(paging_options, necessity_by_association)
-    end
->>>>>>> b739aeeb8 (fix: token balances)
   end
 
   # RAP - random access pagination
@@ -3614,16 +3555,9 @@ defmodule Explorer.Chain do
       ) do
     paging_options
     |> fetch_transactions()
-<<<<<<< HEAD
     |> where([transaction], not is_nil(transaction.block_number) and not is_nil(transaction.index))
     |> apply_filter_by_method_id_to_transactions(method_id_filter)
     |> apply_filter_by_tx_type_to_transactions(type_filter)
-=======
-    |> where(
-      [transaction],
-      not is_nil(transaction.block_number) and not is_nil(transaction.index)
-    )
->>>>>>> b739aeeb8 (fix: token balances)
     |> join_associations(necessity_by_association)
     |> (&if(old_ui?, do: preload(&1, [{:token_transfers, [:token, :from_address, :to_address]}]), else: &1)).()
     |> debug("result collated query")
@@ -3658,18 +3592,11 @@ defmodule Explorer.Chain do
       Results will be the transactions older than the `inserted_at` and `hash` that are passed.
 
   """
-<<<<<<< HEAD
   @spec recent_pending_transactions([paging_options | necessity_by_association_option], true | false, [String.t()], [
           :atom
         ]) :: [Transaction.t()]
   def recent_pending_transactions(options \\ [], old_ui? \\ true, method_id_filter \\ [], type_filter \\ [])
       when is_list(options) do
-=======
-  @spec recent_pending_transactions([paging_options | necessity_by_association_option]) :: [
-          Transaction.t()
-        ]
-  def recent_pending_transactions(options \\ []) when is_list(options) do
->>>>>>> b739aeeb8 (fix: token balances)
     necessity_by_association = Keyword.get(options, :necessity_by_association, %{})
     paging_options = Keyword.get(options, :paging_options, @default_paging_options)
 

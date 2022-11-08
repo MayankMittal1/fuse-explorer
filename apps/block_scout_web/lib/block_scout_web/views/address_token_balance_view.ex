@@ -11,7 +11,7 @@ defmodule BlockScoutWeb.AddressTokenBalanceView do
   end
 
   def filter_by_type(token_balances, type) do
-    Enum.filter(token_balances, fn {_token_balance, token} -> token.type == type end)
+    Enum.filter(token_balances, fn {token_balance, _token} -> token_balance.token.type == type end)
   end
 
   @doc """
@@ -29,12 +29,12 @@ defmodule BlockScoutWeb.AddressTokenBalanceView do
   """
   def sort_by_usd_value_and_name(token_balances) do
     token_balances
-    |> Enum.sort(fn {token_balance1, token1}, {token_balance2, token2} ->
-      usd_value1 = token1.usd_value
-      usd_value2 = token2.usd_value
+    |> Enum.sort(fn {token_balance1, _token1}, {token_balance2, _token2} ->
+      usd_value1 = token_balance1.token.usd_value
+      usd_value2 = token_balance2.token.usd_value
 
-      token_name1 = token1.name
-      token_name2 = token2.name
+      token_name1 = token_balance1.token.name
+      token_name2 = token_balance2.token.name
 
       sort_by_name = sort_2_tokens_by_name(token_name1, token_name2)
 
@@ -44,8 +44,8 @@ defmodule BlockScoutWeb.AddressTokenBalanceView do
         usd_value1,
         usd_value2,
         sort_by_name,
-        token1,
-        token2
+        token_balance1.token,
+        token_balance2.token
       )
     end)
   end

@@ -93,15 +93,11 @@ config :block_scout_web,
   webapp_url: System.get_env("WEBAPP_URL"),
   api_url: System.get_env("API_URL"),
   apps_menu: if(System.get_env("APPS_MENU", "false") == "true", do: true, else: false),
-<<<<<<< HEAD
   apps: System.get_env("APPS") || System.get_env("EXTERNAL_APPS"),
-=======
-  external_apps: System.get_env("EXTERNAL_APPS"),
   eth_omni_bridge_mediator: System.get_env("ETH_OMNI_BRIDGE_MEDIATOR"),
   bsc_omni_bridge_mediator: System.get_env("BSC_OMNI_BRIDGE_MEDIATOR"),
   amb_bridge_mediators: System.get_env("AMB_BRIDGE_MEDIATORS"),
   foreign_json_rpc: System.get_env("FOREIGN_JSON_RPC", ""),
->>>>>>> f909f9c2e (ft: add bridged tokens)
   gas_price: System.get_env("GAS_PRICE", nil),
   restricted_list: System.get_env("RESTRICTED_LIST", nil),
   restricted_list_key: System.get_env("RESTRICTED_LIST_KEY", nil),
