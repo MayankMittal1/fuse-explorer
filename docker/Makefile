@@ -537,7 +537,7 @@ ifdef HAS_BLOCKSCOUT_IMAGE
 	@echo "==> Image exist. Using $(BS_CONTAINER_IMAGE)"
 else
 	@echo "==> No image found, trying to build one..."
-	@docker build -f ./Dockerfile -t $(BS_CONTAINER_IMAGE) ../
+	@docker build --build-arg PROVIDER_URL="$(PROVIDER_URL)" --build-arg CONSENSUS_ADDRESS="$(CONSENSUS_ADDRESS)" -f ./Dockerfile -t $(BS_CONTAINER_IMAGE) ../
 endif
 
 migrate_only:
