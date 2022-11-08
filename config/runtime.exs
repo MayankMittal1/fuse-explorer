@@ -117,6 +117,7 @@ config :block_scout_web,
   new_tags: System.get_env("NEW_TAGS"),
   chain_id: System.get_env("CHAIN_ID"),
   json_rpc: System.get_env("JSON_RPC"),
+  validators_info_url: System.get_env("VALIDATORS_INFO_URL"),
   verification_max_libraries: verification_max_libraries
 
 default_api_rate_limit = 50
