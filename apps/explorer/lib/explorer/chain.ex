@@ -1481,8 +1481,6 @@ defmodule Explorer.Chain do
         address_hash: token.contract_address_hash,
         tx_hash: fragment("CAST(NULL AS bytea)"),
         block_hash: fragment("CAST(NULL AS bytea)"),
-        foreign_token_hash: bridged.foreign_token_contract_address_hash,
-        foreign_chain_id: bridged.foreign_chain_id,
         type: "token",
         name: token.name,
         symbol: token.symbol,
