@@ -76,7 +76,7 @@ defmodule BlockScoutWeb.Tokens.OverviewView do
   end
 
   def smart_contract_with_write_functions?(%Token{contract_address: %Address{smart_contract: nil}}),
-      do: false
+    do: false
 
   @doc """
   Get the total value of the token supply in USD.
@@ -100,8 +100,7 @@ defmodule BlockScoutWeb.Tokens.OverviewView do
       token.foreign_token_contract_address_hash.bytes
       |> Base.encode16(case: :lower)
 
-    foreign_token_contract_address_hash_string =
-      "0x" <> foreign_token_contract_address_hash_string_no_prefix
+    foreign_token_contract_address_hash_string = "0x" <> foreign_token_contract_address_hash_string_no_prefix
 
     base_token_explorer_link <> foreign_token_contract_address_hash_string
   end

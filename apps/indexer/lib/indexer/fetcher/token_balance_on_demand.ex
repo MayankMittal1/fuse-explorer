@@ -47,13 +47,13 @@ defmodule Indexer.Fetcher.TokenBalanceOnDemand do
   end
 
   defp fetch_and_update(block_number, address_hash, stale_current_token_balances) do
-
     current_token_balances_update_params =
       stale_current_token_balances
       |> Enum.map(fn {stale_current_token_balance, _token} ->
         stale_current_token_balances_to_fetch = [
           %{
-            token_contract_address_hash: "0x" <> Base.encode16(stale_current_token_balance.token.contract_address_hash.bytes),
+            token_contract_address_hash:
+              "0x" <> Base.encode16(stale_current_token_balance.token.contract_address_hash.bytes),
             address_hash: "0x" <> Base.encode16(address_hash.bytes),
             block_number: block_number
           }

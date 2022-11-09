@@ -24,24 +24,6 @@
             to: token_path(BlockScoutWeb.Endpoint, :show, @token.contract_address_hash),
             "data-test": "token_link",
             class: "text-truncate pre-wrap") %>
-          <%= if owl_token_amb?(@token.contract_address.hash) do %>
-            <span
-              data-toggle="tooltip"
-              data-placement="top"
-              data-html="true"
-              title="<%= owl_token_amb_info() %>">
-              <%= render BlockScoutWeb.CommonComponentsView, "_info.html", extra_class: "ml-1" %>
-            </span>
-          <% end %>
-          <%= if owl_token_omni?(@token.contract_address.hash) do %>
-            <span
-              data-toggle="tooltip"
-              data-placement="top"
-              data-html="true"
-              title="<%= owl_token_omni_info() %>">
-              <%= render BlockScoutWeb.CommonComponentsView, "_info.html", extra_class: "ml-1" %>
-            </span>
-          <% end %>
           <%= if @bridged_token.custom_metadata do %>
             <div class="card-subtitle list-title-description" style="display: table-row; text-align: left"><%= @bridged_token.custom_metadata %></div>
           <% end %>

@@ -26,8 +26,7 @@ config :explorer, Explorer.Chain.Cache.AddressSumMinusBurnt,
   enabled: true,
   ttl_check_interval: :timer.seconds(1)
 
-cache_address_with_balances_update_interval =
-  System.get_env("CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL")
+cache_address_with_balances_update_interval = System.get_env("CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL")
 
 balances_update_interval =
   if cache_address_with_balances_update_interval do
@@ -146,16 +145,14 @@ case System.get_env("SUPPLY_MODULE") do
 end
 
 if System.get_env("SOURCE_MODULE") == "TokenBridge" do
-  config :explorer, Explorer.ExchangeRates.Source,
-    source: Explorer.ExchangeRates.Source.TokenBridge
+  config :explorer, Explorer.ExchangeRates.Source, source: Explorer.ExchangeRates.Source.TokenBridge
 end
 
 config :explorer, Explorer.Integrations.EctoLogger, query_time_ms_threshold: :timer.seconds(2)
 
 config :explorer, Explorer.Tags.AddressTag.Cataloger, enabled: true
 
-config :explorer, Explorer.Chain.Cache.MinMissingBlockNumber,
-  enabled: System.get_env("DISABLE_WRITE_API") != "true"
+config :explorer, Explorer.Chain.Cache.MinMissingBlockNumber, enabled: System.get_env("DISABLE_WRITE_API") != "true"
 
 config :explorer, Explorer.Repo, migration_timestamps: [type: :utc_datetime_usec]
 

@@ -290,9 +290,7 @@ defmodule BlockScoutWeb.AddressView do
 
   def smart_contract_verified?(%Address{smart_contract: nil}), do: false
 
-  def smart_contract_with_read_only_functions?(
-        %Address{smart_contract: %SmartContract{}} = address
-      ) do
+  def smart_contract_with_read_only_functions?(%Address{smart_contract: %SmartContract{}} = address) do
     Enum.any?(address.smart_contract.abi, &is_read_function?(&1))
   end
 
@@ -344,9 +342,7 @@ defmodule BlockScoutWeb.AddressView do
     "#{String.slice(string_hash, 0..21)}..."
   end
 
-  def transaction_hash(
-        %Address{contracts_creation_internal_transaction: %InternalTransaction{}} = address
-      ) do
+  def transaction_hash(%Address{contracts_creation_internal_transaction: %InternalTransaction{}} = address) do
     address.contracts_creation_internal_transaction.transaction_hash
   end
 
@@ -354,9 +350,7 @@ defmodule BlockScoutWeb.AddressView do
     address.contracts_creation_transaction.hash
   end
 
-  def from_address_hash(
-        %Address{contracts_creation_internal_transaction: %InternalTransaction{}} = address
-      ) do
+  def from_address_hash(%Address{contracts_creation_internal_transaction: %InternalTransaction{}} = address) do
     address.contracts_creation_internal_transaction.from_address_hash
   end
 
@@ -490,8 +484,7 @@ defmodule BlockScoutWeb.AddressView do
 
     if String.length(name) <= max_length,
       do: name,
-      else:
-        "#{String.slice(name, 0, max_length - part_length)}..#{String.slice(name, -part_length, part_length)}"
+      else: "#{String.slice(name, 0, max_length - part_length)}..#{String.slice(name, -part_length, part_length)}"
   end
 
   def address_page_title(address) do
