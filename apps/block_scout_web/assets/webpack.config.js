@@ -162,7 +162,10 @@ const appJs = {
       'process.env.PROVIDER_URL': JSON.stringify(process.env.PROVIDER_URL),
       'process.env.CONSENSUS_ADDRESS': JSON.stringify(
         process.env.CONSENSUS_ADDRESS
-      )
+      ),
+      'process.env.CHAIN_ID': JSON.stringify(process.env.CHAIN_ID),
+      'process.env.JSON_RPC': JSON.stringify(process.env.JSON_RPC),
+      'process.env.GOOGLE_ANALYTICS_MEASUREMENT_ID': JSON.stringify(process.env.GOOGLE_ANALYTICS_MEASUREMENT_ID)
     }),
     new webpack.ProvidePlugin({
       process: 'process/browser',

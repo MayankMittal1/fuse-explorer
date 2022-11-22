@@ -38,4 +38,5 @@ import './lib/ad'
 import './lib/next_cycle_time'
 
 import swal from 'sweetalert2'
+import './lib/google_analytics'
 window.Swal = swal
