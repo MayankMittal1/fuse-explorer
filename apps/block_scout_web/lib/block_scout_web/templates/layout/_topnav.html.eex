@@ -78,6 +78,16 @@
               <%= gettext("Accounts") %>
             <% end %>
           </li>
+          <%= if stats_url() do %>
+            <li class="nav-item">
+              <%= link to: stats_url(), class: "nav-link topnav-nav-link #{tab_status("stats", @conn.request_path)}" do %>
+                <span class="nav-link-icon">
+                  <%= render BlockScoutWeb.IconsView, "_status_icon.html" %>
+                </span>
+                <%= gettext("Stats") %>
+              <% end %>
+            </li>
+          <% end %>
           <%= if Chain.bridged_tokens_enabled?() do %>
             <li class="nav-item dropdown">
               <a href="#" role="button" id="navbarTokensDropdown" class="nav-link topnav-nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -112,7 +112,8 @@ config :block_scout_web,
   json_rpc: System.get_env("JSON_RPC"),
   provider_url: System.get_env("PROVIDER_URL"),
   validators_info_url: System.get_env("VALIDATORS_INFO_URL"),
-  verification_max_libraries: verification_max_libraries
+  verification_max_libraries: verification_max_libraries,
+  stats_url: System.get_env("STATS_URL")
 
 default_api_rate_limit = 50
 default_api_rate_limit_str = Integer.to_string(default_api_rate_limit)
