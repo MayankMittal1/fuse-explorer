@@ -288,5 +288,4 @@ defmodule BlockScoutWeb.LayoutView do
       {:ok, url} -> url
     end
   end
-
 end
