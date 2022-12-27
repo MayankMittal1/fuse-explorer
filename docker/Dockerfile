@@ -35,6 +35,7 @@ RUN npm install npm@latest
 
 ARG PROVIDER_URL
 ARG CONSENSUS_ADDRESS
+ARG GOOGLE_ANALYTICS_MEASUREMENT_ID
 
 # Add blockscout npm deps
 RUN cd apps/block_scout_web/assets/ && \

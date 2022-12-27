@@ -337,6 +337,9 @@ endif
 ifdef VALIDATORS_INFO_URL
 	BLOCKSCOUT_CONTAINER_PARAMS += -e 'VALIDATORS_INFO_URL=$(VALIDATORS_INFO_URL)'
 endif
+ifdef GOOGLE_ANALYTICS_MEASUREMENT_ID
+	BLOCKSCOUT_CONTAINER_PARAMS += -e 'GOOGLE_ANALYTICS_MEASUREMENT_ID=$(GOOGLE_ANALYTICS_MEASUREMENT_ID)'
+endif
 
 HAS_BLOCKSCOUT_IMAGE := $(shell docker images | grep -sw ${DOCKER_IMAGE})
 build: 
@@ -345,7 +348,7 @@ ifdef HAS_BLOCKSCOUT_IMAGE
 	@echo "==> Image exist. Using $(DOCKER_IMAGE)"
 else
 	@echo "==> No image found trying to build one..."
-	@docker build --build-arg COIN="$(COIN)" --build-arg PROVIDER_URL="$(PROVIDER_URL)" --build-arg CONSENSUS_ADDRESS="$(CONSENSUS_ADDRESS)" -f ./Dockerfile -t $(DOCKER_IMAGE) ../
+	@docker build --build-arg COIN="$(COIN)" --build-arg PROVIDER_URL="$(PROVIDER_URL)" --build-arg CONSENSUS_ADDRESS="$(CONSENSUS_ADDRESS)" --build-arg GOOGLE_ANALYTICS_MEASUREMENT_ID="$(GOOGLE_ANALYTICS_MEASUREMENT_ID)" -f ./Dockerfile -t $(DOCKER_IMAGE) ../
 endif
 
 migrate_only:
