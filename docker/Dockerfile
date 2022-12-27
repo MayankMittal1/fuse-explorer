@@ -1,6 +1,6 @@
 FROM bitwalker/alpine-elixir-phoenix:1.12.2
 
-RUN apk --no-cache --update add alpine-sdk gmp-dev automake libtool inotify-tools autoconf python3 file
+RUN apk --no-cache --update add --allow-untrusted alpine-sdk gmp-dev automake libtool inotify-tools autoconf python3 file
 
 # Get Rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -45,6 +45,6 @@ RUN cd apps/block_scout_web/assets/ && \
 
 RUN cd apps/explorer/ && \
     npm install && \
-    apk update && apk del --force-broken-world alpine-sdk gmp-dev automake libtool inotify-tools autoconf python3
+    apk update --allow-untrusted && apk del --force-broken-world --allow-untrusted alpine-sdk gmp-dev automake libtool inotify-tools autoconf python3
 
 RUN mix phx.digest
