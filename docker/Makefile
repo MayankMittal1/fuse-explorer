@@ -555,7 +555,7 @@ ifdef HAS_BLOCKSCOUT_IMAGE
 	@echo "==> Image exist. Using $(BS_CONTAINER_IMAGE)"
 else
 	@echo "==> No image found, trying to build one..."
-	@docker build --build-arg PROVIDER_URL="$(PROVIDER_URL)" --build-arg CONSENSUS_ADDRESS="$(CONSENSUS_ADDRESS)" --build-arg JSON_RPC="$(JSON_RPC)" --build-arg CHAIN_ID="$(CHAIN_ID)" -f ./Dockerfile -t $(BS_CONTAINER_IMAGE) ../
+	@docker build --build-arg PROVIDER_URL="$(PROVIDER_URL)" --build-arg CONSENSUS_ADDRESS="$(CONSENSUS_ADDRESS)" --build-arg JSON_RPC="$(JSON_RPC)" --build-arg CHAIN_ID="$(CHAIN_ID)" --build-arg GOOGLE_ANALYTICS_MEASUREMENT_ID="$(GOOGLE_ANALYTICS_MEASUREMENT_ID)" -f ./Dockerfile -t $(BS_CONTAINER_IMAGE) ../
 endif
 
 migrate_only:
