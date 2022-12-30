@@ -21,6 +21,14 @@ defmodule Explorer.Chain.AddressTokenTransferCsvExporter do
     |> dump_to_stream()
   end
 
+  @spec export_block(Address.t(), String.t(), String.t()) :: Enumerable.t()
+  def export_block(address, from_block, to_block) do
+    address.hash
+    |> fetch_all_token_transfers(from_block, to_block, @paging_options)
+    |> to_csv_format(address)
+    |> dump_to_stream()
+  end
+
   def fetch_all_token_transfers(address_hash, from_block, to_block, paging_options, acc \\ []) do
     options =
       []

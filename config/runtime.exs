@@ -54,7 +54,11 @@ config :block_scout_web,
   version: System.get_env("BLOCKSCOUT_VERSION"),
   release_link: System.get_env("RELEASE_LINK"),
   decompiled_smart_contract_token: System.get_env("DECOMPILED_SMART_CONTRACT_TOKEN"),
-  show_percentage: if(System.get_env("SHOW_ADDRESS_MARKETCAP_PERCENTAGE", "true") == "false", do: false, else: true),
+  show_percentage:
+    if(System.get_env("SHOW_ADDRESS_MARKETCAP_PERCENTAGE", "true") == "false",
+      do: false,
+      else: true
+    ),
   checksum_address_hashes: if(System.get_env("CHECKSUM_ADDRESS_HASHES", "true") == "false", do: false, else: true)
 
 config :block_scout_web, BlockScoutWeb.Chain,
@@ -88,6 +92,10 @@ config :block_scout_web,
   api_url: System.get_env("API_URL"),
   apps_menu: if(System.get_env("APPS_MENU", "false") == "true", do: true, else: false),
   apps: System.get_env("APPS") || System.get_env("EXTERNAL_APPS"),
+  eth_omni_bridge_mediator: System.get_env("ETH_OMNI_BRIDGE_MEDIATOR"),
+  bsc_omni_bridge_mediator: System.get_env("BSC_OMNI_BRIDGE_MEDIATOR"),
+  amb_bridge_mediators: System.get_env("AMB_BRIDGE_MEDIATORS"),
+  foreign_json_rpc: System.get_env("FOREIGN_JSON_RPC", "http://localhost:8545"),
   gas_price: System.get_env("GAS_PRICE", nil),
   restricted_list: System.get_env("RESTRICTED_LIST", nil),
   restricted_list_key: System.get_env("RESTRICTED_LIST_KEY", nil),
@@ -102,7 +110,10 @@ config :block_scout_web,
   new_tags: System.get_env("NEW_TAGS"),
   chain_id: System.get_env("CHAIN_ID"),
   json_rpc: System.get_env("JSON_RPC"),
-  verification_max_libraries: verification_max_libraries
+  provider_url: System.get_env("PROVIDER_URL"),
+  validators_info_url: System.get_env("VALIDATORS_INFO_URL"),
+  verification_max_libraries: verification_max_libraries,
+  stats_url: System.get_env("STATS_URL")
 
 default_api_rate_limit = 50
 default_api_rate_limit_str = Integer.to_string(default_api_rate_limit)
@@ -182,6 +193,7 @@ config :ethereum_jsonrpc,
   disable_archive_balances?: System.get_env("ETHEREUM_JSONRPC_DISABLE_ARCHIVE_BALANCES", "false") == "true"
 
 debug_trace_transaction_timeout = System.get_env("ETHEREUM_JSONRPC_DEBUG_TRACE_TRANSACTION_TIMEOUT", "5s")
+
 config :ethereum_jsonrpc, EthereumJSONRPC.Geth, debug_trace_transaction_timeout: debug_trace_transaction_timeout
 
 config :ethereum_jsonrpc, EthereumJSONRPC.PendingTransaction,
@@ -255,14 +267,21 @@ config :explorer, Explorer.ExchangeRates,
 
 exchange_rates_source =
   cond do
-    System.get_env("EXCHANGE_RATES_SOURCE") == "coin_gecko" -> Explorer.ExchangeRates.Source.CoinGecko
-    System.get_env("EXCHANGE_RATES_SOURCE") == "coin_market_cap" -> Explorer.ExchangeRates.Source.CoinMarketCap
-    true -> Explorer.ExchangeRates.Source.CoinGecko
+    System.get_env("EXCHANGE_RATES_SOURCE") == "coin_gecko" ->
+      Explorer.ExchangeRates.Source.CoinGecko
+
+    System.get_env("EXCHANGE_RATES_SOURCE") == "coin_market_cap" ->
+      Explorer.ExchangeRates.Source.CoinMarketCap
+
+    true ->
+      Explorer.ExchangeRates.Source.CoinGecko
   end
 
 config :explorer, Explorer.ExchangeRates.Source, source: exchange_rates_source
 
-config :explorer, Explorer.KnownTokens, enabled: System.get_env("DISABLE_KNOWN_TOKENS") != "true", store: :ets
+config :explorer, Explorer.KnownTokens,
+  enabled: System.get_env("DISABLE_KNOWN_TOKENS") != "true",
+  store: :ets
 
 config :explorer, Explorer.Market.History.Cataloger, enabled: disable_indexer != "true"
 
@@ -449,10 +468,20 @@ blocks_catchup_fetcher_batch_size_default_str = "10"
 blocks_catchup_fetcher_concurrency_default_str = "10"
 
 {blocks_catchup_fetcher_batch_size, _} =
-  Integer.parse(System.get_env("INDEXER_CATCHUP_BLOCKS_BATCH_SIZE", blocks_catchup_fetcher_batch_size_default_str))
+  Integer.parse(
+    System.get_env(
+      "INDEXER_CATCHUP_BLOCKS_BATCH_SIZE",
+      blocks_catchup_fetcher_batch_size_default_str
+    )
+  )
 
 {blocks_catchup_fetcher_concurrency, _} =
-  Integer.parse(System.get_env("INDEXER_CATCHUP_BLOCKS_CONCURRENCY", blocks_catchup_fetcher_concurrency_default_str))
+  Integer.parse(
+    System.get_env(
+      "INDEXER_CATCHUP_BLOCKS_CONCURRENCY",
+      blocks_catchup_fetcher_concurrency_default_str
+    )
+  )
 
 config :indexer, Indexer.Block.Catchup.Fetcher,
   batch_size: blocks_catchup_fetcher_batch_size,
@@ -460,6 +489,7 @@ config :indexer, Indexer.Block.Catchup.Fetcher,
 
 Code.require_file("#{config_env()}.exs", "config/runtime")
 
-for config <- "../apps/*/config/runtime/#{config_env()}.exs" |> Path.expand(__DIR__) |> Path.wildcard() do
+for config <-
+      "../apps/*/config/runtime/#{config_env()}.exs" |> Path.expand(__DIR__) |> Path.wildcard() do
   Code.require_file("#{config_env()}.exs", Path.dirname(config))
 end

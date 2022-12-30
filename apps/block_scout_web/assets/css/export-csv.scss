@@ -7,6 +7,10 @@
     margin-right: 10px;
 }
 
-.dates-container {
+.dates-container, .blocks-container {
     margin-bottom: 20px;
+    margin-top: 20px;
+}
+.hidden {
+    display: none;
 }

@@ -22,7 +22,7 @@ defmodule BlockScoutWeb.Mixfile do
         credo: :test,
         dialyzer: :test
       ],
-      start_permanent: Mix.env() == :prod,
+      start_permanent: Mix.env() == :dev,
       version: "4.1.8"
     ]
   end

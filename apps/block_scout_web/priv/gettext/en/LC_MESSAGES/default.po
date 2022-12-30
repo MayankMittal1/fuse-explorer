@@ -445,7 +445,7 @@ msgstr ""
 
 #: lib/block_scout_web/templates/chain/_metatags.html.eex:4
 #, elixir-autogen, elixir-format
-msgid "BlockScout provides analytics data, API, and Smart Contract tools for the %{subnetwork}"
+msgid "The Fuse network is a permissionless and border-less public ledger designed for easy integration of everyday payments."
 msgstr ""
 
 #: lib/block_scout_web/templates/chain/show.html.eex:153
@@ -470,7 +470,7 @@ msgstr ""
 
 #: lib/block_scout_web/templates/layout/_footer.html.eex:22
 #, elixir-autogen, elixir-format
-msgid "Blockscout is a tool for inspecting and analyzing EVM based blockchains. Blockchain explorer for Ethereum Networks."
+msgid "BlockScout provides analytics data, API, and Smart Contract tools."
 msgstr ""
 
 #: lib/block_scout_web/templates/block/_tile.html.eex:64

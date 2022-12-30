@@ -43,6 +43,16 @@ defmodule Explorer.Chain.AddressTransactionCsvExporter do
     |> dump_to_stream()
   end
 
+  @spec export_block(Address.t(), String.t(), String.t()) :: Enumerable.t()
+  def export_block(address, from_block, to_block) do
+    exchange_rate = Market.get_exchange_rate(Explorer.coin()) || Token.null()
+
+    address.hash
+    |> fetch_all_transactions(from_block, to_block, @paging_options)
+    |> to_csv_format(address, exchange_rate)
+    |> dump_to_stream()
+  end
+
   def fetch_all_transactions(address_hash, from_block, to_block, paging_options, acc \\ []) do
     options =
       @necessity_by_association

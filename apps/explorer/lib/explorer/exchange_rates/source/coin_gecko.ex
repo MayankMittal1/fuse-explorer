@@ -46,6 +46,42 @@ defmodule Explorer.ExchangeRates.Source.CoinGecko do
   @impl Source
   def format_data(_), do: []
 
+  defp get_last_updated(market_data) do
+    last_updated_data = market_data && market_data["last_updated"]
+
+    if last_updated_data do
+      {:ok, last_updated, 0} = DateTime.from_iso8601(last_updated_data)
+      last_updated
+    else
+      nil
+    end
+  end
+
+  defp get_current_price(market_data) do
+    if market_data["current_price"] do
+      to_decimal(market_data["current_price"]["usd"])
+    else
+      1
+    end
+  end
+
+  defp get_btc_value(id, market_data) do
+    case get_btc_price() do
+      {:ok, price} ->
+        btc_price = to_decimal(price)
+        current_price = get_current_price(market_data)
+
+        if id != "btc" && current_price && btc_price do
+          Decimal.div(current_price, btc_price)
+        else
+          1
+        end
+
+      _ ->
+        1
+    end
+  end
+
   @impl Source
   def source_url do
     explicit_coin_id = Application.get_env(:explorer, ExchangeRates)[:coingecko_coin_id]
@@ -109,7 +145,7 @@ defmodule Explorer.ExchangeRates.Source.CoinGecko do
   end
 
   def coin_id(symbol) do
-    id_mapping = token_symbol_to_id_mapping_to_get_price(symbol)
+    id_mapping = bridged_token_symbol_to_id_mapping_to_get_price(symbol)
 
     if id_mapping do
       {:ok, id_mapping}
@@ -138,42 +174,6 @@ defmodule Explorer.ExchangeRates.Source.CoinGecko do
         resp ->
           resp
       end
-    end
-  end
-
-  defp get_last_updated(market_data) do
-    last_updated_data = market_data && market_data["last_updated"]
-
-    if last_updated_data do
-      {:ok, last_updated, 0} = DateTime.from_iso8601(last_updated_data)
-      last_updated
-    else
-      nil
-    end
-  end
-
-  defp get_current_price(market_data) do
-    if market_data["current_price"] do
-      to_decimal(market_data["current_price"]["usd"])
-    else
-      1
-    end
-  end
-
-  defp get_btc_value(id, market_data) do
-    case get_btc_price() do
-      {:ok, price} ->
-        btc_price = to_decimal(price)
-        current_price = get_current_price(market_data)
-
-        if id != "btc" && current_price && btc_price do
-          Decimal.div(current_price, btc_price)
-        else
-          1
-        end
-
-      _ ->
-        1
     end
   end
 
@@ -216,7 +216,7 @@ defmodule Explorer.ExchangeRates.Source.CoinGecko do
     Application.get_env(:explorer, __MODULE__, [])[key]
   end
 
-  defp token_symbol_to_id_mapping_to_get_price(symbol) do
+  defp bridged_token_symbol_to_id_mapping_to_get_price(symbol) do
     case symbol do
       "UNI" -> "uniswap"
       "SURF" -> "surf-finance"

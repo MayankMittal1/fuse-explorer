@@ -4,8 +4,13 @@ defmodule Explorer.Chain.Cache.TokenExchangeRate do
   """
   use GenServer
 
+  import Ecto.Query, only: [from: 2]
+
+  alias Ecto.Changeset
   alias Explorer.Counters.Helper
   alias Explorer.ExchangeRates.Source
+  alias Explorer.Chain.BridgedToken
+  alias Explorer.Repo
 
   @cache_name :token_exchange_rate
   @last_update_key "last_update"
@@ -56,7 +61,11 @@ defmodule Explorer.Chain.Cache.TokenExchangeRate do
       |> cache_key()
       |> fetch_from_cache()
 
-    cached_value
+    if is_nil(cached_value) || Decimal.compare(cached_value, 0) == :eq do
+      fetch_from_db(token_hash)
+    else
+      cached_value
+    end
   end
 
   # fetching by symbol is not recommended to use because of possible collisions
@@ -73,7 +82,11 @@ defmodule Explorer.Chain.Cache.TokenExchangeRate do
       |> cache_key()
       |> fetch_from_cache()
 
-    cached_value
+    if is_nil(cached_value) || Decimal.compare(cached_value, 0) == :eq do
+      fetch_from_db(token_hash)
+    else
+      cached_value
+    end
   end
 
   def cache_name, do: @cache_name
@@ -144,10 +157,42 @@ defmodule Explorer.Chain.Cache.TokenExchangeRate do
     Helper.fetch_from_cache(key, @cache_name)
   end
 
+  defp fetch_from_db(nil), do: nil
+
+  defp fetch_from_db(token_hash) do
+    token = get_token(token_hash)
+
+    if token do
+      token.exchange_rate
+    else
+      nil
+    end
+  end
+
   def put_into_cache(key, value) do
     if cache_table_exists?() do
       :ets.insert(@cache_name, {key, value})
     end
+  end
+
+  def put_into_db(token_hash, exchange_rate) do
+    token = get_token(token_hash)
+
+    if token && !is_nil(exchange_rate) do
+      token
+      |> Changeset.change(%{exchange_rate: exchange_rate})
+      |> Repo.update()
+    end
+  end
+
+  defp get_token(token_hash) do
+    query =
+      from(bt in BridgedToken,
+        where: bt.home_token_contract_address_hash == ^token_hash
+      )
+
+    query
+    |> Repo.one()
   end
 
   def cache_table_exists? do

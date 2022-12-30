@@ -278,4 +278,14 @@ defmodule BlockScoutWeb.LayoutView do
       []
     end
   end
+
+  def stats_url do
+    :block_scout_web
+    |> Application.get_env(:stats_url)
+    |> validate_url()
+    |> case do
+      :error -> false
+      {:ok, url} -> url
+    end
+  end
 end
