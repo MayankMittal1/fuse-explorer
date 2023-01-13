@@ -7,7 +7,7 @@ export async function addChainToMM ({ btn }) {
 
     const coinName = document.getElementById('js-coin-name').value
     const subNetwork = document.getElementById('js-subnetwork').value
-    const jsonRPC = process.env.JSON_RPC
+    const jsonRPC = document.getElementById('js-json-rpc').value
 
     const blockscoutURL = location.protocol + '//' + location.host + process.env.NETWORK_PATH
     if (chainIDFromWallet !== chainIDFromInstance) {
@@ -43,7 +43,7 @@ export async function addChainToMM ({ btn }) {
 }
 
 function getChainIdHex () {
-  const chainIDFromDOM = process.env.CHAIN_ID
+  const chainIDFromDOM = document.getElementById('js-chain-id').value
   const chainIDFromInstance = parseInt(chainIDFromDOM)
   return chainIDFromInstance && `0x${chainIDFromInstance.toString(16)}`
 }
