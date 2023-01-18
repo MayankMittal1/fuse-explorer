@@ -515,7 +515,7 @@ msgstr ""
 
 #: lib/block_scout_web/templates/layout/_footer.html.eex:41
 #, elixir-autogen, elixir-format
-msgid "Chat (#blockscout)"
+msgid "Chat (#Fuse)"
 msgstr ""
 
 #: lib/block_scout_web/views/block_view.ex:65

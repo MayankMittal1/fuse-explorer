@@ -21,7 +21,8 @@ defmodule BlockScoutWeb.AddressTokenController do
         |> Chain.fetch_last_token_balances(paging_options(params))
         |> Market.add_price()
 
-      {tokens, next_page} = split_list_by_page(token_balances_plus_one)
+      token_updated = Enum.map(token_balances_plus_one, fn {token_balance, _} -> token_balance end)
+      {tokens, next_page} = split_list_by_page(token_updated)
 
       next_page_path =
         case next_page_params(next_page, tokens, params) do
@@ -35,12 +36,12 @@ defmodule BlockScoutWeb.AddressTokenController do
       items =
         tokens
         |> Market.add_price()
-        |> Enum.map(fn {token_balance, token} ->
+        |> Enum.map(fn token_balance ->
           View.render_to_string(
             AddressTokenView,
             "_tokens.html",
             token_balance: token_balance,
-            token: token,
+            token: token_balance.token,
             address: address,
             conn: conn
           )
