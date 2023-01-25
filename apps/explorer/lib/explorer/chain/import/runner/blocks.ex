@@ -122,14 +122,14 @@ defmodule Explorer.Chain.Import.Runner.Blocks do
         :uncle_fetched_block_second_degree_relations
       )
     end)
-    |> Multi.run(:delete_rewards, fn repo, _ ->
-      Instrumenter.block_import_stage_runner(
-        fn -> delete_rewards(repo, changes_list, insert_options) end,
-        :address_referencing,
-        :blocks,
-        :delete_rewards
-      )
-    end)
+    # |> Multi.run(:delete_rewards, fn repo, _ ->
+    #   Instrumenter.block_import_stage_runner(
+    #     fn -> delete_rewards(repo, changes_list, insert_options) end,
+    #     :address_referencing,
+    #     :blocks,
+    #     :delete_rewards
+    #   )
+    # end)
     |> Multi.run(:fork_transactions, fn repo, _ ->
       Instrumenter.block_import_stage_runner(
         fn ->
